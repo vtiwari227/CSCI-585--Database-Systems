@@ -1,0 +1,69 @@
+DB Assignment 1
+---------------
+
+Q1: -----
+
+//Create Table:
+	CREATE TABLE CosineTable(
+	Angle INTEGER PRIMARY KEY,
+	CosValue DECIMAL(8,5) NOT NULL
+	);
+
+//Insert Data :
+	insert all
+	    into CosineTable (Angle, CosValue) Values (0,1)
+    	into CosineTable (Angle, CosValue) Values (10,0.9848)
+    	into CosineTable (Angle, CosValue) Values (15,0.9659)
+    	into CosineTable (Angle, CosValue) Values (20,0.9397)
+    	into CosineTable (Angle, CosValue) Values (25,0.9063)
+	    into CosineTable (Angle, CosValue) Values (30,0.866)
+    	into CosineTable (Angle, CosValue) Values (35,0.8192)
+    	into CosineTable (Angle, CosValue) Values (40,0.766)
+    	into CosineTable (Angle, CosValue) Values (45,0.7071)
+    	into CosineTable (Angle, CosValue) Values (50,0.6428)
+    	into CosineTable (Angle, CosValue) Values (55,0.5736)
+    	into CosineTable (Angle, CosValue) Values (60,0.5)
+	    into CosineTable (Angle, CosValue) Values (65,0.4226)
+	    into CosineTable (Angle, CosValue) Values (70,0.342)
+ 	    into CosineTable (Angle, CosValue) Values (75,0.2588)
+    	into CosineTable (Angle, CosValue) Values (80,0.1736)
+    	into CosineTable (Angle, CosValue) Values (85,0.0872)
+    	into CosineTable (Angle, CosValue) Values (90,0)
+	    select 1 from dual;
+
+
+Lerp the CosValue :
+
+	select LowerCosValue + (HigherCosValue -LowerCosValue)*((73-LowerAngle)/(HigherAngle - LowerAngle)) as Output
+        from (select Angle as LowerAngle, CosValue as  LowerCosValue from CosineTable
+        where Angle < 73 and
+        ROWNUM <=1
+        order by Angle DESC)  ,
+        (select Angle as HigherAngle, CosValue as HigherCosValue
+        from CosineTable
+        where Angle > 73 and Rownum <=1);
+
+Q2: -----
+
+Create Table:
+	CREATE TABLE Salaries(
+	CheckNum INTEGER PRIMARY KEY,
+	Amount DECIMAL(8,2) NOT NULL
+	);
+
+Insert Data:
+	insert all
+	into Salaries (CheckNum, Amount) Values (1111, 4532)
+	into Salaries (CheckNum, Amount) Values (1212, 12000)
+	into Salaries (CheckNum, Amount) Values (1234, 12000)
+	into Salaries (CheckNum, Amount) Values (3344, 6000)
+	into Salaries (CheckNum, Amount) Values (4324, 7500)
+	into Salaries (CheckNum, Amount) Values (4555, 6000.12)
+	into Salaries (CheckNum, Amount) Values (9999, 12000)
+	select 1 from dual;
+
+Finding Maximum occuring row by Amount:
+	select Amount,Count(Amount)
+	from Salaries
+	group by Amount
+	having count (*) = (select max(count(*)) from Salaries group by Amount);

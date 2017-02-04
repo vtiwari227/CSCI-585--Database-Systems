@@ -1,0 +1,21 @@
+Create Graph DB Structure and add Vertex to it:
+---------------------------
+g = TinkerGraph.open().traversal()
+g.addV('island').property('name','I1').as('I1').addV('island').property('name','I2').as('I2').addV('island').property('name','I3').as('I3').addV('island').property('name','I4').as('I4').addE('bridge').from('I1').to('I2').addE('bridge').from('I1').to('I3').addE('bridge').from('I1').to('I4').addE('bridge').from('I1').to('I2').addE('bridge').from('I1').to('I3').addE('bridge').from('I3').to('I4').addE('bridge').from('I2').to('I4')
+
+Above command will create this graph(https://en.wikipedia.org/wiki/Seven_Bridges_of_K%C3%B6nigsberg#/media/File:K%C3%B6nigsberg_graph.svg)
+
+False Result output on Current graph Structure:
+-----------------------------------------------
+The idea is all the vertex of connected graph should have even degree,below query search nodes with odd degree and if count >0,then there is no euler circuit.
+
+g.V().filter(bothE().count().is(neq(4)).is(neq(2)).is(neq(6))).count()
+
+Charnging Graph Structure with removal of one edge(I1 to I4) and adding another(I2 to I3)
+--------------------------------------------------------------
+Now the below query will return 0 as all the vertex have even degree edges,so there is at least one euler circuit
+
+g = TinkerGraph.open().traversal()
+g.addV('island').property('name','I1').as('I1').addV('island').property('name','I2').as('I2').addV('island').property('name','I3').as('I3').addV('island').property('name','I4').as('I4').addE('bridge').from('I1').to('I2').addE('bridge').from('I1').to('I3').addE('bridge').from('I2').to('I3').addE('bridge').from('I1').to('I2').addE('bridge').from('I1').to('I3').addE('bridge').from('I3').to('I4').addE('bridge').from('I2').to('I4')
+
+g.V().filter(bothE().count().is(neq(4)).is(neq(2)).is(neq(6))).count()

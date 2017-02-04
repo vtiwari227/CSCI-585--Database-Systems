@@ -1,0 +1,110 @@
+
+Question : Write a Gremlin command that creates the above graph [hint - you will also need a 'traversal' for it]. The command could be a multi-statement one, or a single line one (with function chaining).
+
+Implementation Step:
+
+1.TinkerGraph.open() will create a in memory TinkerGraph with zero edge and vertex count but this will only give graph structure.
+2.To process the graph we need to have graphTraversalSource which will be produced using ".traversal()" method.the "standard()" argument will provide standard OLTP engine graph traversal.
+
+3. g.addV() method from Graph Traversal will add an vertex and return a vertex as output.we are considering each node as course type.we are passing type as argument-addV('course').We are adding name to each node using property method and utilizing gremlin function chaining concept to chain creation of all vertices together.
+
+4. The ".as" method is label creator which help us to use output for later refrence in query ,In given example we will use node names to create edges between nodes using traversal method addE() with argument as name of edge and using from and to method chaining to define node which will form the edge.
+
+Command :=> g = TinkerGraph.open().traversal(standard())
+
+Output  :=> graphtraversalsource[tinkergraph[vertices:0 edges:0], standard]
+
+Command :=>
+	g.addV('course').property('name','CS101').as('CS101').addV('course').property('name','CS201').as('CS201').addV('course').property('name','CS220').as('CS220').addV('course').property('name','CS420').as('CS420').addV('course').property('name','CS334').as('CS334').addV('course').property('name','CS681').as('CS681').addV('course').property('name','CS400').as('CS400').addV('course').property('name','CS526').as('CS526').addE('preq').from('CS201').to('CS101').addE('preq').from('CS220').to('CS201').addE('preq').from('CS420').to('CS220').addE('preq').from('CS334').to('CS201').addE('preq').from('CS681').to('CS334').addE('preq').from('CS400').to('CS334').addE('preq').from('CS526').to('CS400').addE('co-exit').from('CS526').to('CS400').addE('co-exit').from('CS420').to('CS220')
+
+Output :=> graphtraversalsource[tinkergraph[vertices:8 edges:9], standard] //echoing g from console
+
+
+
+Question :Write a query that will output JUST the doubly-connected nodes
+
+Logic :
+	1. To look for all nodes which have exactly 2 outgoing edges and then print nodes forming those edges
+	2. In context of course node graph,just look for nodes that contain "co-exit" edge as every other node 
+	   already contain "pre-req" edge.
+
+Implementation step for Logic 1:
+
+1.g.V() method will list all the nodes, using filter method we are restricting the output to only those nodes which have exact out edge count as 2 and then are labeling those nodes using method 'as'. this will give output 'CS420' and 'CS526'.
+2.Then performing out('preq') operation on these nodes will give us node connecting to this nodes using edge 'preq' and also with 'co-exit'. So b will be 'CS220' and 'CS400'.Then we will print result in order for each node by their node name.
+ 
+	
+Command :=>  g.V().filter(out().count().is(2)).as('a').out('preq').as('b').select('a','b').by('name')
+
+Output  :=>	[a:CS420,b:CS220]
+		[a:CS526,b:CS400]
+
+Implemtation step for Logic 2 :
+
+1.g.V().out('co-exit') method will filter nodes from all nodes and return other end nodes where incoming edge is 'co-exit'.To print both node connecting edge 'co-exit',utilized ".path()" method and further simiplied to courses name using by 'name' filter.
+
+Command :=>  g.V().out('co-exit').path().by('name')
+
+Output :=>   [CS420,CS220]
+	     [CS526,CS400]
+
+Question : Write a query that will output all the ancestors
+
+Logic :
+	1. In this connected graph,node have three type of edges.zero, one('preq') or two edges ('preq','co-exit').To find 		ancestor of given node,We can keep traversing from that node in outward direction until we reach to node where there is no 		futher outgoing edge. 
+	2. Another way to solve same problem is to find ancestor from all the outgoing edges,For in this graph, We will reach to 	'CS101' from 'CS526' through 'preq' path or 'co-exit' path. We can then remove the redundant nodes and return all the 		unique nodes across the path
+
+Implementation Step for Logic 1: 
+
+1. g.V() will return all nodes for this connected graph.to select a graph node for finding ancestors,I have  used has(<property name>) method to filter to one node.
+
+2. Now,use gremlin repeat method with argument 'out('preq')' defining the action it has to take at every repeat iteration.
+
+3. Until conditinon define the looping termination condition which says it what level we need to check for given conditon.
+
+4. The condition for until is to check that given node don't have any outgoing edge. Which we check with count() method comparing with 'is' method.
+
+5.if we run 'g.V().has("name","CS526").repeat(out('preq')).until(outE().count().is(0))' it will return node with course name 'CS101' as output node.But we want to print all the nodes which come in this path traversal. so use emit() method to print all the 
+nodes passing through traversal from 'CS526' to 'CS101'.
+
+Command :=>  g.V().has("name","CS526").repeat(out('preq')).until(outE().count().is(0)).emit().values('name')
+
+Output  :=>  CS400
+	     CS334
+	     CS201
+	     CS101
+
+Implementation Steps for Logic 2:
+
+1. g.V() will return all nodes for this connected graph.to select a graph node for finding ancestors,I hadve used has(<property name>) method to filter to one node.
+
+2. Now,use gremlin repeat method with argument 'out()'.this will print all the nodes that occur in path through 'co-exit' edge and 'prereq' edge. Then using dedup() will remove all the redudant nodes came across traversal and print unique ancestor nodes for a given node.
+
+Command :=> g.V().has("name","CS526").repeat(out()).until(outE().count().is(0)).emit().values('name').dedup()
+Output  :=>  CS400
+	     CS334
+	     CS201
+	     CS101
+
+Question :Write a query that will output the max depth starting from a given node
+
+Logic : 
+	1.this question is similar to above question,the only difference is instead of repeating out edge we have to check for 		incoming edge and terminate when there is no incoming edge for a node.
+
+Implementation steps for Logic :
+1. g.V() will return all nodes for this connected graph.to select a graph for finding ancestors,I hadve used has(<property name>)
+method to filter to one node.
+
+2. Now,use gremlin repeat method with argument '__.in()' defining the action it has to take at every repeat iteration.The important distinction here is we cant use in() method as we used out() method in above question as 'in' is a reserved keyword in groovy.so we must use __.in() method to move next node through incoming edge.
+
+3. Until conditinon define the looping termination condition which says it what level we need to check for given conditon.
+
+4. The condition for until is to check that give node don't have any incoming edge. Which we check with count() method comparing with 'is' method.
+
+5.if we run 'g.V().has('name','CS101').repeat(__.in()).until(inE().count().is(0))' it will return node with course name 'CS420','CS681' and 'CS526' as output node.
+
+6. To get the depth as number ,We print the complete path for all such ending nodes and filter the one with longest path and expand the path list to element set using unfold() method and then use count() method to count the maximum depth()
+nodes passing through traversal from 'CS526' to 'CS101'.
+
+Command :=>  g.V().has('name','CS101').repeat(__.in()).until(inE().count().is(0)).emit().path().by('name').tail().unfold().count()
+Output  :=>  5

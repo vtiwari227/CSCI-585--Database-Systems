@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.0">
+<Document>
+<Style id="z1">
+<IconStyle><Icon><href>http://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png</href></Icon></IconStyle>
+</Style>
+<Placemark><name>Home</name>
+<styleUrl>#z1</styleUrl><Point><coordinates>-118.292570,34.022553,0</coordinates></Point>
+</Placemark>
+<Placemark><name>Tommy Cam</name>
+<styleUrl>#z1</styleUrl><Point><coordinates>-118.285444,34.020577,0</coordinates></Point>
+</Placemark>
+<Placemark><name>Leavy library</name>
+<styleUrl>#z1</styleUrl><Point><coordinates>-118.282775,34.021996,0</coordinates></Point>
+</Placemark>
+<Placemark><name>Galen Center</name>
+<styleUrl>#z1</styleUrl><Point><coordinates>-118.279836,34.020995,0</coordinates></Point>
+</Placemark>
+<Placemark><name>Radisson Hotel</name>
+<styleUrl>#z1</styleUrl><Point><coordinates>-118.281081,34.019314,0</coordinates></Point>
+</Placemark>
+<Placemark><name>USC Marshell School</name>
+<styleUrl>#z1</styleUrl><Point><coordinates>-118.285805,34.018838,0</coordinates></Point>
+</Placemark>
+<Placemark><name>RTCC</name>
+<styleUrl>#z1</styleUrl><Point><coordinates>-118.286459,34.020092,0</coordinates></Point>
+</Placemark>
+<Placemark><name>Felix</name>
+<styleUrl>#z1</styleUrl><Point><coordinates>-118.279523,34.022066,0</coordinates></Point>
+</Placemark>
+<Placemark><name>lyon center</name>
+<styleUrl>#z1</styleUrl><Point><coordinates>-118.288367,34.024377,0</coordinates></Point>
+</Placemark>
+<Placemark><name>USPS</name>
+<styleUrl>#z1</styleUrl><Point><coordinates>-118.292116,34.023728,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name> Convex Hull Map </name>
+  <Polygon>
+    <extrude>1</extrude>
+    <altitudeMode>relativeToGround</altitudeMode>
+      <outerBoundaryIs>
+    <LinearRing>
+      <coordinates>
+         -118.285805,34.018838,5
+         -118.292570,34.022553,5
+         -118.292116,34.023728,5
+         -118.288367,34.024377,5
+         -118.279523,34.022066,5
+         -118.279836,34.020995,5
+         -118.281081,34.019314,5
+         -118.285805,34.018838,5
+      </coordinates>
+    </LinearRing>
+  </outerBoundaryIs>
+  </Polygon>
+  <Style>
+    <PolyStyle>
+     <color>#a00000ff</color>
+    <outline>0</outline>
+    </PolyStyle>
+   </Style>
+</Placemark>
+</Document></kml>

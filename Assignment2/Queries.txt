@@ -1,0 +1,15 @@
+#Create Table
+---------------
+create table LocationMap (name varchar(40), coord geometry);
+
+#Insert Data into LocationMap
+-----------------------------
+insert into LocationMap values ('Home',ST_MakePoint(-118.292570,34.022553)),('Tommy Cam',ST_MakePoint(-118.285444,34.020577)),('Leavy Library',ST_MakePoint(-118.282775,34.021996)),('Galen Center',ST_MakePoint(-118.279836,34.02099)),('Radisson Hotel',ST_MakePoint(-118.281081,34.019314)),('USC Marshell School',ST_MakePoint(-118.285805,34.018838)),('RTCC',ST_MakePoint(-118.286459,34.020092)),('Felix',ST_MakePoint(-118.279523,34.022066)),('lyon center',ST_MakePoint(-118.288367,34.024377)),('USPS',ST_MakePoint(-118.292116,34.023728));
+
+#Create Convex Hull from set of 2D Points
+----------------------------------------
+select ST_AsText(ST_ConvexHull(ST_Collect(coord))) AS Convex_Hull from LocationMap;
+
+# Check if two  polygon overlap or not
+-----------------------------------------
+select ST_Intersects(a,b) As  Overlap_Result from (select ST_GeomFromText('POLYGON((-118.292570 34.022553,-118.285444 34.020577,-118.279523 34.022066,-118.288367 34.024377,-118.292116 34.023728, -118.292570 34.022553))') As a, ST_GeomFromText('POLYGON((-118.282775 34.021996,-118.279836 34.020995,-118.281081 34.019314,-118.285805 34.018838,-118.286459 34.020092,-118.282775 34.021996))') As b) As foo;
